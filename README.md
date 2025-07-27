@@ -135,10 +135,12 @@ To enable the Gemini CLI to connect to your `palette-mcp` server, add the follow
 
 ```json
 {
+  "theme": "ANSI Light",
+  "selectedAuthType": "oauth-personal",
   "mcpServers": {
-    "paletteMcpServer": {
-      "httpUrl": "http://localhost:8080",
-      "timeout": 5000
+    "get-color-info": {
+        "command": "/usr/local/bin/palette-mcp",
+        "args":["server"]
     }
   }
 }

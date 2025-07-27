@@ -18,20 +18,21 @@ import (
 func main() {
 	// Parse command line flags
 	sseMode := flag.Bool("sse", false, "Run in SSE mode instead of stdio mode")
+	port := flag.String("port", "8080", "Port for SSE or HTTP server")
 	flag.Parse()
 
 	if *sseMode {
-		startMcpServer(false, "", true) // SSE mode
+		startMcpServer(false, *port, true) // SSE mode
 	} else if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "server":
 			startMcpServer(false, "", false) // Stdio mode
 		case "serve-http":
-			port := "8080"
+			// If serve-http is used, check for a port argument after it
 			if len(os.Args) > 2 {
-				port = os.Args[2]
+				*port = os.Args[2]
 			}
-			startMcpServer(true, port, false) // HTTP mode
+			startMcpServer(true, *port, false) // HTTP mode
 		default:
 			runCliTool()
 		}
