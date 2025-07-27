@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 
@@ -15,16 +16,22 @@ import (
 )
 
 func main() {
-	if len(os.Args) > 1 {
+	// Parse command line flags
+	sseMode := flag.Bool("sse", false, "Run in SSE mode instead of stdio mode")
+	flag.Parse()
+
+	if *sseMode {
+		startMcpServer(false, "", true) // SSE mode
+	} else if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "server":
-			startMcpServer(false, "")
+			startMcpServer(false, "", false) // Stdio mode
 		case "serve-http":
 			port := "8080"
 			if len(os.Args) > 2 {
 				port = os.Args[2]
 			}
-			startMcpServer(true, port)
+			startMcpServer(true, port, false) // HTTP mode
 		default:
 			runCliTool()
 		}
@@ -55,7 +62,7 @@ func runCliTool() {
 	json.NewEncoder(os.Stdout).Encode(result)
 }
 
-func startMcpServer(useHTTP bool, port string) {
+func startMcpServer(useHTTP bool, port string, useSSE bool) {
 	s := server.NewMCPServer(
 		"Palette MCP",
 		"1.0.0",
@@ -73,7 +80,13 @@ func startMcpServer(useHTTP bool, port string) {
 
 	s.AddTool(getColorInfoTool, handleGetColorInfo)
 
-	if useHTTP {
+	if useSSE {
+		sseServer := server.NewSSEServer(s, server.WithBaseURL("http://localhost:" + port))
+		logrus.Printf("Starting SSE server on localhost:%s", port)
+		if err := sseServer.Start(":" + port); err != nil {
+			logrus.Fatalf("Server error: %v", err)
+		}
+	} else if useHTTP {
 		if err := server.NewStreamableHTTPServer(s).Start(":" + port); err != nil {
 			logrus.Printf("Server error: %v", err)
 		}

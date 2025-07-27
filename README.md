@@ -104,12 +104,29 @@ You can also run the server with an HTTP transport, which allows you to specify 
 ./palette-mcp serve-http 9000
 ```
 
+#### SSE (Server-Sent Events) Transport
+
+To run the server in SSE mode, use the `-sse` flag. This will start an HTTP server that streams events.
+
+```sh
+# Start on default port 8080 in SSE mode
+./palette-mcp -sse
+
+# Start on a custom port (e.g., 9000) in SSE mode
+./palette-mcp -sse -port 9000
+```
+
 It's recommended to run the server in the background if you want to continue using your terminal:
 
 ```sh
 ./palette-mcp serve-http &
 # Or for a custom port:
 ./palette-mcp serve-http 9000 &
+
+# For SSE mode:
+./palette-mcp -sse &
+# Or for a custom port:
+./palette-mcp -sse -port 9000 & 
 ```
 
 ### Configuring Gemini CLI
