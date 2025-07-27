@@ -17,22 +17,49 @@ To use this tool, you need to have Go installed on your system.
 
 2.  **Build the executable:**
     ```sh
-    go build -o colorname main.go
+    go build -o palette-mcp ./cmd/palette-mcp
     ```
+
+## Download Pre-built Binaries
+
+You can download pre-built binaries for various operating systems and architectures directly from the [GitHub Releases page](https://github.com/kelvinzer0/PaletteMCP/releases).
+
+Replace `[VERSION]` with the desired release version (e.g., `v1.0.0`).
+
+### Linux / macOS
+
+```bash
+# Download the binary (replace [OS] and [ARCH] with your system, e.g., linux_amd64, darwin_arm64)
+wget https://github.com/kelvinzer0/PaletteMCP/releases/download/[VERSION]/palette-mcp_[OS]_[ARCH] -O palette-mcp
+
+# Make it executable
+chmod +x palette-mcp
+
+# Move it to a directory in your PATH (e.g., /usr/local/bin)
+sudo mv palette-mcp /usr/local/bin/
+```
+
+### Windows
+
+1.  Download the appropriate `.exe` file from the [GitHub Releases page](https://github.com/kelvinzer0/PaletteMCP/releases) (e.g., `palette-mcp_windows_amd64.exe`).
+2.  Rename the downloaded file to `palette-mcp.exe`.
+3.  Move `palette-mcp.exe` to a directory that is included in your system's `PATH` environment variable. A common practice is to create a `bin` folder in your user directory (e.g., `C:\Users\YourUser\bin`) and add it to `PATH`.
+
+
 
 ## Usage
 
 Run the tool from your terminal, passing a hex color code (with or without the `#` prefix) as an argument.
 
 ```sh
-./colorname #ff6347
+./palette-mcp #ff6347
 ```
 
 ### Example
 
 **Input:**
 ```sh
-./colorname #ff6347
+./palette-mcp #ff6347
 ```
 
 **Output:**

@@ -11,7 +11,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: colorname #hexcode")
+		fmt.Println("Usage: palette-mcp #hexcode")
 		os.Exit(1)
 	}
 
