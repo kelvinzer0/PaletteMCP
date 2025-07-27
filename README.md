@@ -71,6 +71,65 @@ Run the tool from your terminal, passing a hex color code (with or without the `
 }
 ```
 
+## Integration with Forge MCP
+
+`PaletteMCP` can be easily integrated into `forge mcp` workflows to provide color name lookup capabilities. You can add `palette-mcp` as a custom command within your `forge mcp` configuration.
+
+### Adding PaletteMCP to Forge MCP
+
+You can add `palette-mcp` to your `forge mcp` configuration using the `forge mcp add` command or by manually editing your `.mcp.json` file.
+
+#### Using `forge mcp add` (Command Line)
+
+```shell
+# Example: Add palette-mcp as a command named 'colorname'
+forge mcp add --name colorname --command /path/to/palette-mcp --args "#{{hex_code}}"
+```
+*   Replace `/path/to/palette-mcp` with the actual absolute path to your `palette-mcp` executable.
+*   `#{{hex_code}}` is a placeholder for the hexadecimal color code that `forge mcp` will pass to `palette-mcp`. The double curly braces `{{...}}` indicate a variable or expression in `forge mcp`.
+
+#### Manual `.mcp.json` Configuration
+
+You can also manually create or modify your `.mcp.json` file. This file can be located in your local project directory or in your user-specific configuration.
+
+```json
+{
+  "mcpServers": {
+    "colorname_tool": {
+      "command": "/path/to/palette-mcp",
+      "args": ["#{{hex_code}}"],
+      "description": "Converts a hex color code to its closest named color."
+    },
+    "another_server": {
+      "url": "http://localhost:3000/events"
+    }
+  }
+}
+```
+*   **`colorname_tool`**: This is the name you will use to invoke `palette-mcp` via `forge mcp` (e.g., `forge mcp run colorname_tool #RRGGBB`).
+*   **`command`**: The absolute path to your `palette-mcp` executable.
+*   **`args`**: An array of arguments to pass to `palette-mcp`. `"#{{hex_code}}"` is a common pattern for passing dynamic input from `forge mcp`.
+
+### Example Forge MCP Usage
+
+Once configured, you can use `palette-mcp` within your `forge mcp` workflows:
+
+```shell
+# Run the configured colorname_tool with a hex code
+forge mcp run colorname_tool "#00BFFF"
+
+# Example of using the output in a multi-agent workflow (conceptual)
+# Assuming 'forge mcp run colorname_tool' outputs JSON
+COLOR_INFO=$(forge mcp run colorname_tool "#FF0000")
+COLOR_NAME=$(echo $COLOR_INFO | jq -r '.name')
+echo "The color is: $COLOR_NAME"
+```
+*   **Note**: The `jq` command is a powerful JSON processor for the command line. You might need to install it separately (`brew install jq` on macOS, `sudo apt-get install jq` on Debian/Ubuntu).
+
+This integration allows `forge mcp` to leverage `PaletteMCP` for color code to name conversions as part of larger automation or multi-agent tasks.
+
+
+
 ## How It Works
 
 The tool calculates the "closest" color by finding the Euclidean distance between the input color's RGB values and the RGB values of each color in the predefined list. The color with the smallest distance is considered the closest match.
