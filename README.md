@@ -192,8 +192,8 @@ You can also manually create or modify your `.mcp.json` file. This file can be l
 {
   "mcpServers": {
     "colorname_tool": {
-      "command": "/path/to/palette-mcp",
-      "args": ["#{{hex_code}}"],
+      "command": "/usr/local/bin/palette-mcp",
+      "args": ["server"],
       "description": "Converts a hex color code to its closest named color."
     }
   }
