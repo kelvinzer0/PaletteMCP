@@ -49,13 +49,17 @@ sudo mv palette-mcp /usr/local/bin/
 
 ## Usage
 
+`palette-mcp` can be used as a command-line tool or run as a Gemini Model Context Protocol (MCP) server.
+
+### Command-Line Tool Usage
+
 Run the tool from your terminal, passing a hex color code (with or without the `#` prefix) as an argument.
 
 ```sh
 ./palette-mcp #ff6347
 ```
 
-### Example
+### Example (Command-Line Tool)
 
 **Input:**
 ```sh
@@ -70,6 +74,79 @@ Run the tool from your terminal, passing a hex color code (with or without the `
   "rgb": "rgb(255, 99, 71)"
 }
 ```
+
+## Gemini MCP Server Integration
+
+`palette-mcp` can also run as an MCP server, exposing its functionality to the Gemini CLI. This allows the Gemini model to discover and execute `palette-mcp`'s tools.
+
+### Running the MCP Server
+
+To start `palette-mcp` in server mode, use the `server` argument.
+
+#### Stdio Transport
+
+This is the default transport method and is used when you run the server with the `server` argument.
+
+```sh
+# Start the server using stdio
+./palette-mcp server
+```
+
+#### HTTP Transport
+
+You can also run the server with an HTTP transport, which allows you to specify a custom port.
+
+```sh
+# Start on default port 8080
+./palette-mcp serve-http
+
+# Start on a custom port (e.g., 9000)
+./palette-mcp serve-http 9000
+```
+
+It's recommended to run the server in the background if you want to continue using your terminal:
+
+```sh
+./palette-mcp serve-http &
+# Or for a custom port:
+./palette-mcp serve-http 9000 &
+```
+
+### Configuring Gemini CLI
+
+To enable the Gemini CLI to connect to your `palette-mcp` server, add the following configuration to your `settings.json` file. This file can be found globally at `~/.gemini/settings.json` or in your project's `.gemini/settings.json`.
+
+```json
+{
+  "mcpServers": {
+    "paletteMcpServer": {
+      "httpUrl": "http://localhost:8080",
+      "timeout": 5000
+    }
+  }
+}
+```
+
+*   **`paletteMcpServer`**: This is the name you give to your MCP server within Gemini CLI. You can choose any descriptive name.
+*   **`httpUrl`**: The URL where your `palette-mcp` server is listening. Adjust the port if you started the server on a custom port (e.g., `http://localhost:9000`).
+*   **`timeout`**: The maximum time (in milliseconds) Gemini CLI will wait for a response from the server.
+
+### Available Tools
+
+Once configured and the server is running, the Gemini CLI will discover the following tools:
+
+*   **`echo`**: Echoes back the provided message. (Example tool for demonstration)
+    *   **Parameters**: `message` (string)
+*   **`get_color_info`**: Retrieves information about a color given its hex code.
+    *   **Parameters**: `hexCode` (string, e.g., `#FF0000`)
+
+### Example Gemini CLI Usage (Conceptual)
+
+After setting up, you can interact with the tools via the Gemini CLI. For instance, you might ask:
+
+`What is the name of the color #00BFFF?`
+
+The Gemini model, if it decides to use the `get_color_info` tool, would execute it and provide the result.
 
 ## Integration with Forge MCP
 
@@ -99,9 +176,6 @@ You can also manually create or modify your `.mcp.json` file. This file can be l
       "command": "/path/to/palette-mcp",
       "args": ["#{{hex_code}}"],
       "description": "Converts a hex color code to its closest named color."
-    },
-    "another_server": {
-      "url": "http://localhost:3000/events"
     }
   }
 }
@@ -187,7 +261,7 @@ The following table lists all the named colors used for matching.
 | forestgreen          | #228b22 | 34, 139, 34   |
 | fuchsia              | #ff00ff | 255, 0, 255   |
 | gainsboro            | #dcdcdc | 220, 220, 220 |
-| ghostwhite           | #f8f8ff | 248, 248, 255 |
+| ghostwhite              | #f8f8ff | 248, 248, 255 |
 | gold                 | #ffd700 | 255, 215, 0   |
 | goldenrod            | #daa520 | 218, 165, 32  |
 | gray                 | #808080 | 128, 128, 128 |
